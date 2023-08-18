@@ -45,18 +45,16 @@ class UserSerializer(ModelSerializer):
     
 class leave_applicationSerializer(ModelSerializer):
     user = UserSerializer(read_only=True)
-    user_id=serializers.CharField(write_only=True)
     
     class Meta:
         model = leave_application
         fields = '__all__'
         
     def create(self, validated_data):
-        print(validated_data)
-        user_data = validated_data.pop('user_id')
-        # user_id = user_data['id']
+        
+        user_id = self.context['request'].user.id # getting user_id from the token
         application = leave_application(**validated_data)
-        user_instance = Users.objects.get(id=user_data)
+        user_instance = Users.objects.get(id=user_id)
         application.user = user_instance
         application.save()
 
