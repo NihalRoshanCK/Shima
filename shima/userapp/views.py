@@ -79,7 +79,7 @@ class LeaveApplicationViewSet(viewsets.ModelViewSet):
         if self.action in ['partial_update', 'retrieve']:
             return [IsAuthenticated()]
         elif self.action == 'create':
-            return [IsAuthenticated() , IsAdminUser() ]
+            return [IsAuthenticated() or IsAdminUser() ]
         else:
             return [IsAdminUser()]
     
