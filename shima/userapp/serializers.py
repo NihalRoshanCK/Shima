@@ -65,21 +65,13 @@ class leave_applicationSerializer(ModelSerializer):
     
     
 class AttendanceSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Attendance
         fields = '__all__' 
     
 
 
-# class NotificationContentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = NotificationContent
-#         fields = '__all__'
 
-# class NotificationSerializer(serializers.ModelSerializer):
-#     content_message = serializers.CharField(source='content.message', read_only=True)
-
-#     class Meta:
-#         model = Notification
-#         fields = '__all__'
 

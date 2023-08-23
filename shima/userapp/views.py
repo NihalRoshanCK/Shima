@@ -16,6 +16,8 @@ from userapp.utilities import genarate_otp
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
+from django.db.models import Q
+from datetime import datetime
 
 
 
@@ -192,3 +194,29 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_200_OK)
     
 
+class AttendanceFilterView(ListAPIView):
+    serializer_class = AttendanceSerializer
+    permission_classes = [IsAuthenticated]
+    def get_queryset(self):
+        user = self.request.user
+        user_id=None
+        start_date = self.request.query_params.get('start_date',None)
+        end_date = self.request.query_params.get('end_date',None)
+        if user.is_superuser:
+            user_id = self.request.query_params.get('user',None)
+
+        queryset = Attendance.objects.all()
+
+        if start_date and end_date:
+            
+            queryset = queryset.filter(date__range=[start_date, end_date])
+            
+        if user.is_superuser  and user_id:
+            
+            queryset = queryset.filter(user_id=user_id)
+        
+        elif not user.is_superuser :
+        
+            queryset = queryset.filter(user=user)
+        
+        return queryset
