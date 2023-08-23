@@ -107,7 +107,7 @@ def get_new_notifications(user):
             'message': message,
             'created': created
         })
-    
+    return new_notifications
     
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
