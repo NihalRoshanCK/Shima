@@ -104,9 +104,6 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             await self.close(code=1009)
             return
         await self.accept()
-        # await self.send_notification_count()
-        # await self.sent_pending_notifications()
-        # await self.send_new_notifications()
         
     async def disconnect(self, close_code):
         pass
@@ -117,30 +114,12 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
 
         if action == 'mark_as_seen':
             await mark_notifications_as_seen(user)
-        # if action =='see_pending_notification':
-        #     await self.sent_pending_notifications()
         if action =='see_notification_count':
             await self.send_notification_count()
         if action =='see_notification':
             await self.send_notifications()
     
-    # async def sent_pending_notifications(self):
-    #     user = self.scope['user']
-    #     pending_notifications = await get_pending_notifications(user)
-    #     for notification in pending_notifications:
-    #         await self.send_json({
-    #             'action': 'previous_notification',
-    #             'notification': {
-    #                 'id': notification.content.id,
-    #                 'message': notification.content.message,
-    #                 'created':notification.content.created_at
-    #             }
-    #         })
-            
-            # Mark the notification as sent inside the loop
-            
-
-        # After processing all pending notifications, update the notification count
+    
         
     async def send_notification_count(self):
         user = self.scope['user']
@@ -153,12 +132,13 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         new_notifications = await get_new_notifications(user)
         if new_notifications:
             for notification in new_notifications:
-                await self.send_json({
-                    'action': 'new_notification',
-                    'notification': {
-                        'id': notification.content.id,
-                        'message': notification.content.message,
-                        'created':notification.content.created_at
-                    }
-                })
-            # await asyncio.sleep(20)  # Sleep for 20 seconds (adjust as needed)
+                content = notification.content
+                if content and hasattr(content, 'message'):
+                    await self.send_json({
+                        'action': 'new_notification',
+                        'notification': {
+                            'id': content.id,
+                            'message': content.message,
+                            'created': content.created_at
+                        }
+                    })
