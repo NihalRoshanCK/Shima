@@ -96,11 +96,15 @@ def get_pending_notifications(user):
 def get_new_notifications(user):
     from socketSystem.models import Notification,NotificationContent
     notifications=Notification.objects.filter(user=user,is_seen=False)
+    new_notifications = []
     for notification in notifications:
-        notification['message']=notification.content.message
-        notification['created']=notification.content.created_at
-    print(notifications)
-    return notifications
+        message = notification.content.message
+        created = notification.content.created_at
+        new_notifications.append({
+            'id': notification.content.id,
+            'message': message,
+            'created': created
+        })
     
     
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
