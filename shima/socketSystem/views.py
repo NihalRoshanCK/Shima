@@ -20,7 +20,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
         # Create a NotificationContent object with the message
         content_message = request.data.get('content_message')
         content = NotificationContent.objects.create(message=content_message)
-
         # Get all users you want to send the notification to
         users = Users.objects.all()  # You might need to adjust this query
 
