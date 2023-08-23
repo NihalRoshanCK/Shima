@@ -145,8 +145,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 await self.send_json({
                     'action': 'new_notification',
                     'notification': {
-                        'id': notification[id],
-                        'message': notification[message],
-                        'created':notification[created]
+                        'id': notification['id'],
+                        'message': notification['message'],
+                        'created':notification['created']
                     }
                 },encoder=CustomJSONEncoder())
