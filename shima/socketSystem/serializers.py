@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from socketSystem.models import Message, MessageMedia,NotificationContent,Notification
-from auths.serializer import UserSerializer
+from userapp.serializers import UserSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):
