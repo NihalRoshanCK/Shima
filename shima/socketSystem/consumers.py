@@ -100,8 +100,9 @@ def get_new_notifications(user):
     for notification in notifications:
         message = notification.content.message
         created = notification.content.created_at
+        id=notification.content.id
         new_notifications.append({
-            'id': notification.content.id,
+            'id': id,
             'message': message,
             'created': created
         })
@@ -144,8 +145,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                 await self.send_json({
                     'action': 'new_notification',
                     'notification': {
-                        'id': notification.content.id,
-                        'message': notification.message,
-                        'created':notification.created_at
+                        'id': notification[id],
+                        'message': notification[message],
+                        'created':notification[created]
                     }
-                })
+                },encoder=CustomJSONEncoder())
