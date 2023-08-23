@@ -14,8 +14,8 @@ def save_message(message: dict):
     from userapp.models import Users
     from socketSystem.serializers import MessageSerializer
     try:
-        message['receiver_id'] = CustomUser.objects.get(id=message.pop('receiver_id')).id
-    except CustomUser.DoesNotExist:
+        message['receiver_id'] = Users.objects.get(id=message.pop('receiver_id')).id
+    except Users.DoesNotExist:
         raise ValueError('Receiver does not exist')
 
     serializer = MessageSerializer(data=message)
