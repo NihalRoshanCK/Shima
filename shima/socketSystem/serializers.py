@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from socketSystem.models import Message, MessageMedia,NotificationContent,Notification
 from userapp.serializers import UserSerializer
-
+import json
+from datetime import datetime
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
