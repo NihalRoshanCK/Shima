@@ -191,4 +191,4 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             'failed_count': failed_count
         }, status=status.HTTP_200_OK)
     
-    
+

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'userapp',
     "rest_framework_simplejwt.token_blacklist",
     'channels',
+    'socketSystem',
 ]
 
 MIDDLEWARE = [

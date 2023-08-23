@@ -63,15 +63,17 @@ class leave_application(models.Model):
 
     def __str__(self):
         return self.user.email
+# class NotificationContent(models.Model):
+#     message = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
     
-class Notification(models.Model):
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    is_seen=models.BooleanField(default=False)
+# class Notification(models.Model):
+#     user = models.ForeignKey(Users, on_delete=models.CASCADE)
+#     content = models.ForeignKey(NotificationContent, on_delete=models.CASCADE)
+#     is_seen=models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.user}: {self.message}"
+#     def __str__(self):
+#         return f"{self.user}: {self.content__message}"
 
 class Attendance(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)

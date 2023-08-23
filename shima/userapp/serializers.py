@@ -70,5 +70,16 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields = '__all__' 
     
 
-class NotificationSerializer(serializers.Serializer):
-    message = serializers.CharField(max_length=200)
+
+# class NotificationContentSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = NotificationContent
+#         fields = '__all__'
+
+# class NotificationSerializer(serializers.ModelSerializer):
+#     content_message = serializers.CharField(source='content.message', read_only=True)
+
+#     class Meta:
+#         model = Notification
+#         fields = '__all__'
+

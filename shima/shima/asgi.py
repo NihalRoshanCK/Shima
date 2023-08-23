@@ -8,18 +8,33 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/asgi/
 """
 
 import os
-from django.core.asgi import get_asgi_application
+from channels.layers import get_channel_layer
 from channels.routing import ProtocolTypeRouter, URLRouter
-from userapp.consumers import NotificationConsumer
-from django.urls import path
+from channels.security.websocket import OriginValidator
+from django.contrib.staticfiles.handlers import ASGIStaticFilesHandler  
+from django.core.asgi import get_asgi_application
 
 from django.core.asgi import get_asgi_application
+from shima.routing import websocket_urlpatterns
+from socketSystem.middlewares import JwtAuthMiddlewareStack
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shima.settings')
 
-application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
-    "websocket": URLRouter([
-        path("ws/notifications/", NotificationConsumer.as_asgi()),
-    ]),
-})
+application = ProtocolTypeRouter(
+    {
+        'http': get_asgi_application(),
+        'websocket': OriginValidator(
+            JwtAuthMiddlewareStack(
+                URLRouter(
+                    routes=websocket_urlpatterns
+                )
+            ),
+            ['*']
+        ),
+
+    }
+)
+application = ASGIStaticFilesHandler(application)
+
+
+channel_layer = get_channel_layer()
