@@ -15,7 +15,7 @@ from socketSystem.serializers import MessageSerializer,MessageMediaSerializer,No
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
-
+    permission_classes=[IsAdminUser]
     def create(self, request, *args, **kwargs):
         # Create a NotificationContent object with the message
         content_message = request.data.get('content_message')
