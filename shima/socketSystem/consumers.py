@@ -5,6 +5,7 @@ import json
 import asyncio
 
 
+
 def make_group_name(user_id):
     return f'chat_{user_id}'
 
@@ -137,6 +138,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({'notification_count': count})
         
     async def send_notifications(self):
+        from socketSystem.serializers import CustomJSONEncoder
         user = self.scope['user']
         # while True:
         new_notifications = await get_new_notifications(user)
@@ -149,4 +151,4 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                         'message': notification['message'],
                         'created':notification['created']
                     }
-                },encoder=CustomJSONEncoder())
+                },encoder=CustomJSONEncoder)
