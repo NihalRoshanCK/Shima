@@ -95,7 +95,12 @@ def get_pending_notifications(user):
 @database_sync_to_async
 def get_new_notifications(user):
     from socketSystem.models import Notification,NotificationContent
-    return list(Notification.objects.filter(user=user,is_seen=False))
+    notifications=Notification.objects.filter(user=user,is_seen=False)
+    for notification in notifications:
+        notification['message']=notification.content.message
+        notification['created']=notification.content.created_at
+    print(notifications)
+    return notifications
     
     
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
@@ -132,13 +137,11 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         new_notifications = await get_new_notifications(user)
         if new_notifications:
             for notification in new_notifications:
-                content = notification.content
-                if content and hasattr(content, 'message'):
-                    await self.send_json({
-                        'action': 'new_notification',
-                        'notification': {
-                            'id': content.id,
-                            'message': content.message,
-                            'created': content.created_at
-                        }
-                    })
+                await self.send_json({
+                    'action': 'new_notification',
+                    'notification': {
+                        'id': notification.content.id,
+                        'message': notification.message,
+                        'created':notification.created_at
+                    }
+                })
