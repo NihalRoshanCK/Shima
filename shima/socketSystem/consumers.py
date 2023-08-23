@@ -121,7 +121,8 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             await self.sent_pending_notifications()
         if action =='see_notification_count':
             await self.send_notification_count()
-            
+        if action =='see_new_notification':
+            await self.send_new_notifications()
     
     async def sent_pending_notifications(self):
         user = self.scope['user']
@@ -140,8 +141,6 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
             
 
         # After processing all pending notifications, update the notification count
-        count = await get_notification_count(self.scope['user'])
-        await self.send_notification_count(count)
         
     async def send_notification_count(self):
         user = self.scope['user']
