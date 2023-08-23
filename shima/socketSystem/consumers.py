@@ -85,7 +85,7 @@ def mark_notifications_as_seen(user):
     from socketSystem.models import Notification,NotificationContent
     notifications = Notification.objects.filter(user=user, is_seen=False)
     for notification in notifications:
-        notification.seen = True
+        notification.is_seen = True
         notification.save()
         
 @database_sync_to_async
@@ -100,7 +100,7 @@ def get_new_notifications(user):
     new_notifications = []
     for notification in notifications:
         message = notification.content.message
-        created = notification.content.created_at
+        created = notification.content.created_at.isoformat()
         id=notification.content.id
         new_notifications.append({
             'id': id,
@@ -108,6 +108,8 @@ def get_new_notifications(user):
             'created': created
         })
     return new_notifications
+
+
     
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
@@ -138,9 +140,7 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({'notification_count': count})
         
     async def send_notifications(self):
-        from socketSystem.serializers import CustomJSONEncoder
         user = self.scope['user']
-        # while True:
         new_notifications = await get_new_notifications(user)
         if new_notifications:
             for notification in new_notifications:
@@ -149,6 +149,6 @@ class NotificationConsumer(AsyncJsonWebsocketConsumer):
                     'notification': {
                         'id': notification['id'],
                         'message': notification['message'],
-                        'created':notification['created']
+                        'created': notification['created']
                     }
-                },encoder=CustomJSONEncoder)
+                }) 

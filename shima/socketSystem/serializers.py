@@ -2,8 +2,7 @@ from rest_framework import serializers
 
 from socketSystem.models import Message, MessageMedia,NotificationContent,Notification
 from userapp.serializers import UserSerializer
-import json
-from datetime import datetime
+
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
@@ -36,8 +35,3 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
         
-class CustomJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime):
-            return obj.isoformat()
-        return super().default(obj)
