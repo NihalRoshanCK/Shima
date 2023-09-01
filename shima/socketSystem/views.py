@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated,IsAdminUser
 from userapp.models import Users
 from socketSystem.models import Message,MessageMedia,Notification,NotificationContent
-from socketSystem.serializers import MessageSerializer,MessageMediaSerializer,NotificationContentSerializer,NotificationSerializer
+from socketSystem.serializers import MessageSerializer,MessageMediaSerializer,NotificationContentSerializer,NotificationSerializer,NotificationGetSerializer
 # Create your views here.
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
@@ -59,8 +59,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-class Notification(viewsets.ModelViewSet):
-    # queryset=Notification.objects.filter(user=request.user,is_seen=False)
+class Notification(ListAPIView):
     serializer_class=NotificationGetSerializer
     permission_classes=[IsAuthenticated]
     def get_queryset(self):
