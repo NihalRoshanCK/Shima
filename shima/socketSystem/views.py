@@ -59,7 +59,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-class Notification(ListAPIView):
+class NotificationView(ListAPIView):
     serializer_class=NotificationGetSerializer
     permission_classes=[IsAuthenticated]
     def get_queryset(self):
