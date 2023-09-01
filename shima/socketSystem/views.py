@@ -60,8 +60,12 @@ class NotificationViewSet(viewsets.ModelViewSet):
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 class Notification(viewsets.ModelViewSet):
-    queryset=Notification.objects.filter(user=request.user,is_seen=False)
+    # queryset=Notification.objects.filter(user=request.user,is_seen=False)
     serializer_class=NotificationGetSerializer
     permission_classes=[IsAuthenticated]
-    
+    def get_queryset(self):
+        queryset = Notification.objects.filter(user=self.request.user,is_seen=False)
+        
+        return queryset
+
     
