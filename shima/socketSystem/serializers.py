@@ -34,7 +34,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = '__all__'
         
-class NotificationGetSerializer(serializers.ModelSerial):
+class NotificationGetSerializer(serializers.ModelSerializer):
     content_message = serializers.CharField(source='content.message', read_only=True)
     
     class Meta:
