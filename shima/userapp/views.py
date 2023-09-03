@@ -3,13 +3,17 @@ from datetime import date
 from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView, ListAPIView,ListCreateAPIView,RetrieveUpdateDestroyAPIView
+
+from django.db.models import Sum
+from django.db.models.functions import ExtractMonth, ExtractYear
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny, IsAuthenticated,IsAdminUser
-from userapp.models import Users,leave_application,Attendance
+from userapp.models import Users,leave_application,Attendance,Payment
 from django.contrib.auth import authenticate
-from userapp.serializers import UserSerializer,leave_applicationSerializer,AttendanceSerializer
+from userapp.serializers import UserSerializer,leave_applicationSerializer,AttendanceSerializer,PaymentSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from userapp.utilities import genarate_otp
@@ -221,3 +225,75 @@ class AttendanceFilterView(ListAPIView):
         
         return queryset
 
+class PaymentViewSet(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        elif self.action == 'user_payments':
+            return [UserPaymentsPermission()]
+        elif self.action == 'pending_payments':
+            return [IsAdminUser()]
+        else:
+            return [IsAdminUser()]
+
+    @action(detail=False, methods=['GET'])
+    def user_payments(self, request, user_reference=None):
+        # Get payments for a specific user or for the requesting user
+        user = self.request.user
+        if user_reference:
+            user = Users.objects.get(reference=user_reference)
+
+        payments = Payment.objects.filter(user=user)
+        serializer = PaymentSerializer(payments, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['GET'])
+    def pending_payments(self, request):
+        # Get a list of users with pending payments
+        pending_users = Users.objects.filter(
+            ~Q(payment__payment_date__month=now().month)
+        )
+
+        serializer = UsersSerializer(pending_users, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['GET'])
+    def calculate_revenue(self, request):
+        start_date = request.query_params.get('start_date',None)
+        end_date = request.query_params.get('end_date',None)
+        start_year = request.query_params.get('start_year',None)
+        end_year = request.query_params.get('end_year',None)
+
+        # Calculate revenue and difference based on query parameters
+        if start_year and end_year:
+            queryset = queryset.filter(payment_date__year__range=[start_year, end_year])
+        elif start_year:
+            queryset = queryset.filter(payment_date__year=start_year)
+        elif start_date and end_date:
+            queryset = queryset.filter(payment_date__range=[start_date, end_date])
+        elif start_date:
+            queryset = queryset.filter(payment_date__month=start_date.month, payment_date__year=start_date.year)
+        else:
+            today = datetime.today()
+            queryset = queryset.filter(payment_date__month=today.month, payment_date__year=today.year)
+        
+        
+
+        total_revenue = queryset.aggregate(total=Sum('amount'))['total'] or 0
+
+        if end_date and start_date:
+            difference = total_revenue - queryset.filter(
+                payment_date__month=start_date.month, payment_date__year=start_date.year
+            ).aggregate(total=Sum('amount'))['total'] or 0
+        elif end_year and start_year:
+            difference = total_revenue - queryset.filter(payment_date__year=start_year).aggregate(total=Sum('amount'))['total'] or 0
+        else:
+            difference = 0
+
+        return Response({
+            'total_revenue': total_revenue,
+            'difference': difference,
+        }, status=status.HTTP_200_OK)

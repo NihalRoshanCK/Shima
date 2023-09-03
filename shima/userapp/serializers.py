@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer,ValidationError
 from rest_framework import serializers
 
-from userapp.models import Users,leave_application,Attendance
+from userapp.models import Users,leave_application,Attendance,Payment
 
 
 class UserSerializer(ModelSerializer):
@@ -73,5 +73,9 @@ class AttendanceSerializer(serializers.ModelSerializer):
     
 
 
-
+class PaymentSerializer(serializers.ModelSerializer):
+    user=UserSerializer(read_only=True)
+    class Meta:
+        model=Payment
+        fields = '__all__' 
 
