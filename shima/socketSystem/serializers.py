@@ -16,7 +16,11 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
         fields = ('id', 'text', 'type', 'media', 'media_id', 'sender', 'sender_id', 'receiver_id', 'receiver', 'created_at')
 
+class MessageCRUDserializer(serializers.ModelSerializer):
 
+    class Meta:
+        model=Message
+        fields=fields = "__all__"
 class MessageMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = MessageMedia
