@@ -1,12 +1,14 @@
 from django.urls import path,include
 from rest_framework.routers import DefaultRouter
-from userapp.views import UserViewSet ,RegistrationView,LoginView, LeaveApplicationViewSet,RefreshTokenView,AttendanceViewSet,GetUserLeaveApplications,AttendanceFilterView
+from userapp.views import UserViewSet ,RegistrationView,LoginView, LeaveApplicationViewSet,RefreshTokenView,AttendanceViewSet,GetUserLeaveApplications,AttendanceFilterView,PaymentViewSet
 
 
 router = DefaultRouter()
 router.register(r'user', UserViewSet),
 router.register(r'leave-applications',  LeaveApplicationViewSet),
 router.register(r'attendance', AttendanceViewSet)
+router.register(r'payment', PaymentViewSet)
+
 
 urlpatterns = [
   
