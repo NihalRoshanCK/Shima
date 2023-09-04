@@ -245,7 +245,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         # Get payments for a specific user or for the requesting user
         user = self.request.user
         if user.is_superuser:
-            payment=Payment.objects.all()
+            payments=Payment.objects.all()
         else:
             payments = Payment.objects.filter(user=user)
         # if user_reference:
