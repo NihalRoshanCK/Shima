@@ -244,10 +244,12 @@ class PaymentViewSet(viewsets.ModelViewSet):
     def user_payments(self, request, user_reference=None):
         # Get payments for a specific user or for the requesting user
         user = self.request.user
-        if user_reference:
-            user = Users.objects.get(reference=user_reference)
-
-        payments = Payment.objects.filter(user=user)
+        if user.is_superuser:
+            payment=Payment.objects.all()
+        else:
+            payments = Payment.objects.filter(user=user)
+        # if user_reference:
+        #     user = Users.objects.get(reference=user_reference)
         serializer = PaymentSerializer(payments, many=True)
         return Response(serializer.data)
 
