@@ -234,7 +234,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         if self.action == 'create':
             return [IsAuthenticated()]
         elif self.action == 'user_payments':
-            return [UserPaymentsPermission()]
+            return [IsAuthenticated()]
         elif self.action == 'pending_payments':
             return [IsAdminUser()]
         else:
