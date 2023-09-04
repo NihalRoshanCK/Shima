@@ -269,7 +269,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
         end_date = request.query_params.get('end_date',None)
         start_year = request.query_params.get('start_year',None)
         end_year = request.query_params.get('end_year',None)
-
+        queryset=Payment.objects.all()
         # Calculate revenue and difference based on query parameters
         if start_year and end_year:
             queryset = queryset.filter(payment_date__year__range=[start_year, end_year])
