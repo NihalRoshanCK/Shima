@@ -79,6 +79,6 @@ class PaymentSerializer(serializers.ModelSerializer):
         model=Payment
         fields = '__all__'
     def create(self, validated_data):
-        validated_data["user"]=self.context['request']
+        validated_data["user"]=self.context['request'].user
         payment=Payment(**validated_data)
         return payment
