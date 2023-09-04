@@ -85,28 +85,29 @@ class LeaveApplicationViewSet(viewsets.ModelViewSet):
         if self.action in ['partial_update', 'retrieve']:
             return [IsAuthenticated()]
         elif self.action == 'create':
-            return [IsAuthenticated() or IsAdminUser() ]
+            return [AllowAny()]
         else:
             return [IsAdminUser()]
     
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
+        def retrieve(self, request, *args, **kwargs):
+            instance = self.get_object()
 
-        # Check if the current user is the owner of the instance or an admin
-        if instance == request.user or request.user.is_superuser:
-            serializer = self.get_serializer(instance)
-            return Response(serializer.data)
-        else:
-            raise ValidationError("You are not allowed to retrieve this user's data.")
+            # Check if the current user is the owner of the instance or an admin
+            if instance == request.user or request.user.is_superuser:
+                serializer = self.get_serializer(instance)
+                return Response(serializer.data)
+            else:
+                raise ValidationError("You are not allowed to retrieve this user's data.")
     
-    def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()
+        def partial_update(self, request, *args, **kwargs):
+            instance = self.get_object()
 
-        # Check if the current user is the owner of the instance or an admin
-        if instance == request.user or request.user.is_superuser:
-            return super().partial_update(request, *args, **kwargs)
-        else:
-            raise ValidationError("You are not allowed to update this user's data.")
+            # Check if the current user is the owner of the instance or an admin
+            if instance == request.user or request.user.is_superuser:
+                return super().partial_update(request, *args, **kwargs)
+            else:
+                raise ValidationError("You are not allowed to update this user's data.")
+    
         
 class GetUserLeaveApplications(ListAPIView):
     permission_classes = [IsAuthenticated]
