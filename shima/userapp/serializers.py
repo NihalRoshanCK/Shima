@@ -84,4 +84,5 @@ class PaymentSerializer(serializers.ModelSerializer):
         user=Users.objects.get(pk=validated_data["user"].id)
         user.last_payment=validated_data["payment_date"]
         user.save()
+        payment.save()
         return payment
