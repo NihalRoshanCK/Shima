@@ -287,16 +287,6 @@ class PaymentViewSet(viewsets.ModelViewSet):
 
         total_revenue = queryset.aggregate(total=Sum('amount'))['total'] or 0
 
-        if end_date and start_date:
-            difference = total_revenue - queryset.filter(
-                payment_date__month=start_date.month, payment_date__year=start_date.year
-            ).aggregate(total=Sum('amount'))['total'] or 0
-        elif end_year and start_year:
-            difference = total_revenue - queryset.filter(payment_date__year=start_year).aggregate(total=Sum('amount'))['total'] or 0
-        else:
-            difference = 0
+    
 
-        return Response({
-            'total_revenue': total_revenue,
-            'difference': difference,
-        }, status=status.HTTP_200_OK)
+        return Response({'total_revenue': total_revenue}, status=status.HTTP_200_OK)
