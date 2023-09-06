@@ -162,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE ='Asia/Kolkata'
 
 USE_I18N = True
 
@@ -194,6 +194,6 @@ MEDIA_URL = '/media/'
 WEBSOCKET_URL = "/ws/"
 
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
-CELERY_TIMEZONE = 'UTC'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'Asia/Kolkata'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

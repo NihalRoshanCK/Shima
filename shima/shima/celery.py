@@ -15,13 +15,13 @@ app = Celery('shima')
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-# app.conf.beat_schedule= {
-#     'send-mail-every-day':{
-#         'task':'vehicleapp.tasks.fetch_and_store_news',
-#         'schedule': crontab(hour=14,minute=45),
+app.conf.beat_schedule= {
+    'create-attantance-avery maoning':{
+        'task':'user.task.asign_attendance',
+        'schedule': crontab(hour=1,minute=30),
 
-#     }
-# }
+    }
+}
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
