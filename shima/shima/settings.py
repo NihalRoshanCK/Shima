@@ -46,10 +46,15 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'channels',
     'socketSystem',
+    'celery',
+    'celery.result',
+    'django_celery_results',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',   'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -187,3 +192,8 @@ MEDIA_ROOT = BASE_DIR /'uploads'
 MEDIA_URL = '/media/'
 
 WEBSOCKET_URL = "/ws/"
+
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_TIMEZONE = 'UTC'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
