@@ -17,7 +17,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 app.conf.beat_schedule= {
     'create-attantance-avery maoning':{
-        'task':'user.task.asign_attendance',
+        'task':'userapp.tasks.asign_attendance',
         'schedule': crontab(hour=1,minute=30),
 
     }
