@@ -19,6 +19,7 @@ class Message(models.Model):
 
 class MessageMedia(models.Model):
     media = models.FileField(upload_to='media/', null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
 
@@ -30,6 +31,7 @@ class Notification(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     content = models.ForeignKey(NotificationContent, on_delete=models.CASCADE)
     is_seen=models.BooleanField(default=False)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    
     def __str__(self):
         return f"{self.user}: {self.content__message}"
