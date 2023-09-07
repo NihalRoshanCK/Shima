@@ -203,7 +203,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             'message': f'Successfully marked attendance for {success_count} users',
             'failed_count': failed_count
         }, status=status.HTTP_200_OK)
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['patch'])
     def patch_attendance_bulk(self, request):
         attendance_data = request.data.get('attendance_data', [])
         success_count = 0
