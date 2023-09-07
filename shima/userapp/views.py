@@ -22,12 +22,18 @@ from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from datetime import datetime
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        refresh = self.get_token(self.user)
+        access = refresh.access_token
+        data['refresh'] = str(refresh)
+        data['access'] = str(access)
+        data['user'] = UserSerializer(self.user).data
+        return data
 
-
-
-class RefreshTokenView(TokenRefreshView):
-    pass
 
 
 class RegistrationView(CreateAPIView):
@@ -190,6 +196,27 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             try:
                 user = Users.objects.get(pk=user_id)
                 Attendance.objects.create(user=user, date=attendance_date, is_present=is_present)
+                success_count += 1
+            except Users.DoesNotExist:
+                failed_count += 1
+        return Response({
+            'message': f'Successfully marked attendance for {success_count} users',
+            'failed_count': failed_count
+        }, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['post'])
+    def patch_attendance_bulk(self, request):
+        attendance_data = request.data.get('attendance_data', [])
+        success_count = 0
+        failed_count = 0
+        for entry in attendance_data:
+            user_id = entry.get('user_id')
+            attendance_date = entry.get('attendance_date')
+            is_present = entry.get('is_present', False)
+            try:
+                user = Users.objects.get(pk=user_id)
+                attendance=Attendance.objects.get(user=user, date=attendance_date)
+                attendance.is_present=True
+                attendance.save()
                 success_count += 1
             except Users.DoesNotExist:
                 failed_count += 1
