@@ -7,9 +7,10 @@ import logging
 def asign_payment():
     logging.info()
     pass
+
 @shared_task
 def asign_attendance():
-    users=User.objects.all()
+    users=Users.objects.all()
     for user in users:
         try:
             Attendance.objects.create(user=user,is_present=False)
