@@ -1,0 +1,114 @@
+version: '3'
+
+networks:
+  shima_network:
+    driver: bridge
+
+services:
+  app:
+    build: .
+    # restart: always
+    container_name: shima_gunicorn
+    command: gunicorn shima.wsgi --bind 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      # - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    env_file:
+      - ./shima/.env
+    networks:
+      - shima_network
+    depends_on:
+      - db
+
+
+
+  db:
+    image: postgres
+    # restart: always
+    container_name: shima_postgres
+    environment:
+      - POSTGRES_USER=nihal
+      - POSTGRES_PASSWORD=nihal
+      - POSTGRES_DB=shima
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:  
+      - "5432:5432"
+    networks:
+      - shima_network
+
+  socket:
+    build: .
+    container_name: shima_daphne
+    command: daphne -b 0.0.0.0 -p 8001 shima.asgi:application
+    ports:
+      - "8001:8001"
+    env_file:
+      - shima/.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - shima_network
+
+  redis:
+    image: redis
+    container_name: shima_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - shima_network
+
+  celery:
+    build: .
+    # restart: always
+    container_name: shima_celery_worker
+    command: celery -A shima worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+      - socket
+
+    networks:
+      - shima_network
+
+  celery-beat:
+    build: .
+    # restart: always
+    container_name: shima_celery_beat
+    command: celery -A shima beat --loglevel=info
+    depends_on:
+      - db
+      - redis
+      - celery
+      - socket
+
+      # - migrate
+    networks:
+      - shima_network
+
+
+  nginx:
+    build: ./nginx
+    container_name: shima_nginx
+    # restart: always
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+      - socket
+    networks:
+      - shima_network
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+  redis_data:
