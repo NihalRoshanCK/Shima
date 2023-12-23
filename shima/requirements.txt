@@ -73,7 +73,6 @@ six==1.16.0
 sqlparse==0.4.4
 swagger-spec-validator==3.0.3
 Twisted==22.10.0
-# twisted-iocpsupport==1.0.3
 txaio==23.1.1
 typing_extensions==4.7.1
 tzdata==2023.3
