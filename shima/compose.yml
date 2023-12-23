@@ -29,10 +29,8 @@ services:
     image: postgres
     # restart: always
     container_name: shima_postgres
-    environment:
-      - POSTGRES_USER=nihal
-      - POSTGRES_PASSWORD=nihal
-      - POSTGRES_DB=shima
+    env_file:
+      - ./shima/.env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:  
